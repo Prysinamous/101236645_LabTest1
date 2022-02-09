@@ -58,11 +58,39 @@ app.get('/login',function(req,res)
 //   })
 // })
 
+
 io.on('connection', (socket) => {
+
+  
   console.log(`A user is connected: ${socket.id}`)
-  //console.log(socket.rooms);
-  //socket.join("room1")
-  //console.log(socket.rooms);
+
+  //Join New room
+   socket.on('join',async ({roomName, roomLeave}) => {
+    
+    console.log(roomName,roomLeave)
+
+    socket.join(roomName)
+    socket.leave(roomLeave)
+
+    var roomy = await Message.find({room:roomName})
+    
+    socket.emit('JoinedRoom', roomy)
+})
+
+
+socket.on('sentMessage',async ({message, roomName}) => 
+{
+  console.log(message, roomName)
+  var combined = new Message({room:roomName, message:message.message})
+  await combined.save()
+  
+  var roomy = await Message.find({room:roomName})
+    
+    socket.emit('JoinedRoom', roomy)
+})
+
+
+
 
   socket.on('disconnection', () =>
   {

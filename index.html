@@ -849,7 +849,7 @@ Website: http://emilcarlsson.se/
 						<div class="meta">
 							<p class="name">Boys Room</p>
 							<p class="preview" >Boys Chat Room</p>
-              <a href="boy.html">Enter Here</a>
+              <a data-room="boy" onClick="joinedtheroom(this)">Enter Here</a>
 						</div>
 					</div>
 				</li>
@@ -860,7 +860,7 @@ Website: http://emilcarlsson.se/
 						<div class="meta">
 							<p class="name">Girls Room</p>
 							<p class="preview">Girls Chat Room</p>
-              <a href="index.html">Enter Here</a>
+              <a data-room="girl" onClick="joinedtheroom(this)">Enter Here</a>
 						</div>
 					</div>
 				</li>
@@ -872,7 +872,7 @@ Website: http://emilcarlsson.se/
 						<div class="meta">
 							<p class="name">Pets Room</p>
 							<p class="preview" >Pets Chat Room</p>
-              <a href="animal.html" id="clear">Enter Here</a>
+              <a data-room="animal" onclick="joinedtheroom(this)">Enter Here</a>
 						</div>
 					</div>
 				</li>
@@ -886,15 +886,15 @@ Website: http://emilcarlsson.se/
 	</div>
 	<div class="content">
 		<div class="contact-profile">
-			<img src="assets/pinkgirly.jpg" alt="" />
-			<p>Girls Room</p>
+			<img src="assets/blueuser.png" alt="" />
+			<p>Current Room</p>
 	
 
 		</div>
 		<div class="messages">
 			<ul>
 				<li class="replies">
-					<img src="/assets/greenboy.jpg" alt="" />
+					<img src="/assets/blueuser.png" alt="" />
 					
           <div id="messages" style="color:navy;"> 
             <br>
@@ -950,8 +950,7 @@ Website: http://emilcarlsson.se/
 		<div class="message-input">
 			<div class="wrap">
 
-			<!-- <input type="text" id = "name" class="form-control" placeholder="Enter your username..." />
-            <input type="text" id = "room" class="form-control" placeholder="Enter your Current Room (G)" /> -->
+		
 
       <input type="text" id = "message" class="form-control" placeholder="Write your message..." />
 
@@ -961,23 +960,8 @@ Website: http://emilcarlsson.se/
 
       <script>
 
-            // var clearing = element('clear');
-
-            // if(data.clear)
-            // {
-            //   messages.value = ''
-            // }
-
-            // clearing.addEventListener('click', function(){
-            //         socket.emit('clear');
-            //     });
-
-            //     // Clear Message
-            //     socket.on('cleared', function(){
-            //         messages.textContent = '';
-            //     });
-            
-
+         
+        //DONT BACKTRACK THIS
 
         var socket = io();
         socket.on("connect", () => {
@@ -986,28 +970,60 @@ Website: http://emilcarlsson.se/
          $(() => {
              $("#send").click(()=>{
                 sendMessage({message: $("#message").val()});
-                //  sendMessage({name: $("#name").val(), message: $("#message").val(), room: $("#room").val()});
              })
      
              getMessages()
          })
      
+         
          socket.on('message', addMessages)
      
          function addMessages(message){
-            //  $("#messages").append(`<h4> ${message.name} </h4> <p> ${message.message} </p> <p> ${message.room}</p>`)
              $("#messages").append(` <p> ${message.message} </p>`)
 
          }
      
+          socket.on('JoinedRoom', (roomy) =>
+          {
+            $("#messages").empty()
+              roomy.forEach(addMessages);
+              console.log(roomy)
+
+          })
+
+          function joinedtheroom(element)
+          {
+              var e= $(element).data("room")
+              console.log(e)
+
+              var currentRoom = $("[data-room].active").data("room")
+
+              var temp = {roomName:e, roomLeave:currentRoom}
+
+              //put logic here for room name picture 
+              
+              socket.emit("join",temp)
+
+              $("[data-room]").removeClass("active")
+
+              $(element).addClass("active")
+          }
+
          function getMessages(){
-           $.get('http://localhost:3001/messages', (data) => {
-             data.forEach(addMessages);
-           })
+          
+          //  $.get('http://localhost:3001/messages', (data) => {
+          //    data.forEach(addMessages);
+          //  })
+          socket.emit
          }
      
-         function sendMessage(message){
-           $.post('http://localhost:3001/messages', message)
+         function sendMessage(message)
+         {
+          //  $.post('http://localhost:3001/messages', message)
+          console.log($("[data-room]").filter(".active").data("room"))
+          var currentRoom = $("[data-room]").filter(".active").data("room")
+          socket.emit("sentMessage", {message:message, roomName:currentRoom})
+
          }
      </script> 
 
