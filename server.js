@@ -45,9 +45,25 @@ app.post('/messages', (req, res) => {
   })
 })
 
+const users= []
+
 app.get('/login',function(req,res)
 {
   res.sendFile('login.html')
+})
+
+app.post('/login',function(req,res)
+{
+})
+
+app.get('/register',function(req,res)
+{
+  res.sendFile('register.html')
+})
+
+app.post('/register',function(req,res)
+{
+  req.body.password
 })
 
 // socket.on('clear', function(data)
