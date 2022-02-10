@@ -2,15 +2,12 @@ var express = require('express');
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose');
 const { channel } = require('diagnostics_channel');
-
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-
 app.use(express.static(__dirname));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}))
-
 
 //Declare MongoDB Schemas
 var Message = mongoose.model('Message',{
@@ -18,9 +15,6 @@ var Message = mongoose.model('Message',{
     message : String,
     room: String
   })
-
-
-//boy room *********************************************************************************************
 
   var dbUrl = 'mongodb+srv://robbi:Panchitoisfat12@assignment2db.znhee.mongodb.net/labtest1?retryWrites=true&w=majority'
   
@@ -45,7 +39,6 @@ app.post('/messages', (req, res) => {
   })
 })
 
-const users= []
 
 app.get('/login',function(req,res)
 {
@@ -65,15 +58,6 @@ app.post('/register',function(req,res)
 {
   req.body.password
 })
-
-// socket.on('clear', function(data)
-// {
-//   Message.remove({}, function()
-//   {
-//     io.emit('cleared')
-//   })
-// })
-
 
 io.on('connection', (socket) => {
 
@@ -106,8 +90,6 @@ socket.on('sentMessage',async ({message, roomName}) =>
 })
 
 
-
-
   socket.on('disconnection', () =>
   {
     io.emit('message', 'User has left the chat')
@@ -127,5 +109,6 @@ mongoose.connect(dbUrl , { useUnifiedTopology: true, useNewUrlParser: true }, (e
 var server = http.listen(3001, () => {
   console.log('server is running on port', server.address().port);
 });
+
 
 
