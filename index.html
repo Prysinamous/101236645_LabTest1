@@ -1025,7 +1025,8 @@ Website: http://emilcarlsson.se/
           //  $.post('http://localhost:3001/messages', message)
           console.log($("[data-room]").filter(".active").data("room"))
           var currentRoom = $("[data-room]").filter(".active").data("room")
-          socket.emit("sentMessage", {message:message, roomName:currentRoom})
+          var fromUser = $("[data-room]").filter(".active").data("username")
+          socket.emit("sentMessage", {message:message, roomName:currentRoom, fromuser:fromUser})
 
          }
      </script> 

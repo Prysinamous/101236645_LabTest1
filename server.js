@@ -12,8 +12,26 @@ app.use(bodyParser.urlencoded({extended: false}))
 //Declare MongoDB Schemas
 var Message = mongoose.model('Message',{
     name : String,
+    username: String,
+    from_user: 
+    {
+      type:String,
+      default: "User"
+    },
+    date_sent:{
+      type: Date,
+      default: Date.now
+    },
     message : String,
     room: String
+
+    //“_id”: 847het8nieigouy4v”,
+    // “from_user”: “pritamworld”,
+    // “to_user”: “moxdroid”,
+    // “room”: “covid19”,
+    // “message”: “What about covid19 vaccine?”
+    // “date_sent”: “01-28-2021 18:30 PM”
+
   })
 
   var dbUrl = 'mongodb+srv://robbi:Panchitoisfat12@assignment2db.znhee.mongodb.net/labtest1?retryWrites=true&w=majority'
@@ -78,14 +96,13 @@ io.on('connection', (socket) => {
 })
 
 
-socket.on('sentMessage',async ({message, roomName}) => 
+socket.on('sentMessage',async ({message, roomName, fromuser}) => 
 {
   console.log(message, roomName)
-  var combined = new Message({room:roomName, message:message.message})
+  var combined = new Message({room:roomName, message:message.message, from_user: fromuser})
   await combined.save()
   
-  var roomy = await Message.find({room:roomName})
-    
+  var roomy = await Message.find({room:roomName})  
     socket.emit('JoinedRoom', roomy)
 })
 
